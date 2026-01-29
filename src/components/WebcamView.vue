@@ -8,6 +8,10 @@
       autoplay
       muted
     />
+    <div v-if="isLoading" class="loading-overlay">
+      <div class="spinner"></div>
+      <p class="loading-text">Processing image...</p>
+    </div>
   </div>
 </template>
 
@@ -20,6 +24,7 @@ export default {
     return {
       mediaStream: null,
       isFlipped: true,
+      isLoading: false,
       imageData: {
         image: "",
         image_orienteation: 0,
@@ -66,14 +71,19 @@ export default {
     async predict() {
       if (!this.imageData.image) throw new Error("Primero captura una imagen.");
 
-      const [resultImageUrl, resultJson] = await Promise.all([
-        classifyResnet60(this.imageData.image, "png"),
-        classifyResnet60Data(this.imageData.image, "png"),
-      ]);
+      this.isLoading = true;
+      try {
+        const [resultImageUrl, resultJson] = await Promise.all([
+          classifyResnet60(this.imageData.image, "png"),
+          classifyResnet60Data(this.imageData.image, "png"),
+        ]);
 
-      const payload = { resultImageUrl, resultJson };
-      this.$emit("predicted", payload);
-      return payload;
+        const payload = { resultImageUrl, resultJson };
+        this.$emit("predicted", payload);
+        return payload;
+      } finally {
+        this.isLoading = false;
+      }
     },
 
     startVideoStream() {
@@ -107,6 +117,7 @@ export default {
 .video-container {
   width: 100%;
   height: 100%;
+  position: relative;
 }
 
 .camera-stream {
@@ -118,5 +129,44 @@ export default {
 
 .camera-stream.flipped {
   transform: scaleX(-1);
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #ffffff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  color: #ffffff;
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: 500;
 }
 </style>

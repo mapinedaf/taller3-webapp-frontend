@@ -1,23 +1,28 @@
 <template>
-  <Navbar titulo="Grupo 6" />
-  <!--Router view-->
-
-  <ResnetPage/>
-  <PlotResnetVue/>
-
+  <Navbar titulo="Grupo 6" @home-clicked="handleHomeClick" @link-clicked="handleLinkClick" />
+  <router-view></router-view>
 </template>
 
 <script>
-import ResnetPage from "./pages/ResnetPage.vue"
 import Navbar from "./components/Navbar.vue";
-import PlotResnetVue from './pages/PlotResnet.vue';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'App',
   components: {
-    ResnetPage,
-    Navbar,
-    PlotResnetVue
+    Navbar
+  },
+  setup() {
+    const router = useRouter();
+    
+    return {
+      handleHomeClick() {
+        router.push('/');
+      },
+      handleLinkClick() {
+        router.push('/plot');
+      }
+    };
   }
 }
 </script>

@@ -1,0 +1,14 @@
+// Bootstrap SCSS customization
+// Define your custom colors here before importing Bootstrap
+
+$primary: #007bff;        // Change this to your primary color
+$secondary: #6c757d;      // Change this to your secondary color
+$success: #28a745;        // Success color
+$danger: #dc3545;         // Danger/error color
+$warning: #ffc107;        // Warning color
+$info: #17a2b8;          // Info color
+$light: #f8f9fa;         // Light color
+$dark: #343a40;          // Dark color
+
+// Import Bootstrap after setting variables
+@import 'bootstrap/scss/bootstrap';
